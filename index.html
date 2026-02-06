@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>KhalilTV Pro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+</head>
+<body>
+
+<div id="splash-screen">
+    <div class="splash-content">
+        <img src="logo.png" class="splash-logo" alt="Logo">
+        <div class="splash-title">KhalilTV Pro</div>
+        <div class="splash-loader"></div>
+    </div>
+</div>
+
+<div id="app-content">
+
+    <div class="page active" id="categories-page">
+        <div class="header">
+            <h2>تصفح الفئات</h2>
+        </div>
+        
+        <div class="categories-container">
+            <div class="cat-card" onclick="loadCategory('أخبار')">
+                <div class="cat-icon"><i class="fa-solid fa-newspaper"></i></div>
+                <span>أخبار</span>
+            </div>
+            <div class="cat-card" onclick="loadCategory('رياضة')">
+                <div class="cat-icon"><i class="fa-solid fa-futbol"></i></div>
+                <span>رياضة</span>
+            </div>
+            <div class="cat-card" onclick="loadCategory('افلام')">
+                <div class="cat-icon"><i class="fa-solid fa-film"></i></div>
+                <span>أفلام</span>
+            </div>
+            <div class="cat-card" onclick="loadCategory('جزائري')">
+                <div class="cat-icon"><i class="fa-solid fa-flag"></i></div>
+                <span>جزائري</span>
+            </div>
+            <div class="cat-card" onclick="loadCategory('مسلسلات')">
+                <div class="cat-icon"><i class="fa-solid fa-tv"></i></div>
+                <span>مسلسلات</span>
+            </div>
+            <div class="cat-card" onclick="loadCategory('اطفال')">
+                <div class="cat-icon"><i class="fa-solid fa-child-reaching"></i></div>
+                <span>أطفال</span>
+            </div>
+        </div>
+
+        <div class="section-divider"><span>القنوات المقترحة</span></div>
+        <div class="grid" id="main-grid"></div>
+    </div>
+
+    <div class="page" id="movies-page">
+        <div class="header"><h2>مكتبة الأفلام</h2></div>
+        <div class="grid" id="movies-grid"></div>
+    </div>
+
+    <div class="page" id="search-page">
+        <div class="search-wrapper">
+            <i class="fa-solid fa-search search-icon"></i>
+            <input type="text" id="search-input" placeholder="ابحث عن قناة، فيلم، مسلسل..." oninput="searchHandler()">
+        </div>
+        <div class="grid" id="search-results"></div>
+    </div>
+
+    <div class="page" id="favorites-page">
+        <div class="header"><h2>قنواتي المفضلة</h2></div>
+        <div class="grid" id="fav-grid">
+            <div class="empty-state">لا توجد قنوات مفضلة حالياً</div>
+        </div>
+    </div>
+
+    <div class="page" id="settings-page">
+        <div class="settings-wrapper">
+            <div class="settings-header">
+                <img src="logo.png" class="settings-logo-img">
+                <h3>KhalilTV Pro</h3>
+            </div>
+
+            <div class="settings-card">
+                <div class="setting-item">
+                    <div class="setting-label">
+                        <i class="fa-solid fa-moon"></i> الوضع الداكن
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked onclick="toggleTheme()">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-label">
+                        <i class="fa-solid fa-language"></i> اللغة
+                    </div>
+                    <select class="lang-select">
+                        <option>العربية</option>
+                        <option>Français</option>
+                        <option>English</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="about-card">
+                <div class="about-row">
+                    <span>الإصدار</span>
+                    <span class="version-badge">1.0</span>
+                </div>
+                <div class="about-dev">
+                    <p>برمجة وتصميم</p>
+                    <h4>Lefreid Khalil</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="bottom-nav">
+    <div class="nav-item active" onclick="switchPage('categories-page', this)">
+        <i class="fa-solid fa-layer-group"></i>
+        <span>الفئات</span>
+    </div>
+    <div class="nav-item" onclick="switchPage('movies-page', this)">
+        <i class="fa-solid fa-clapperboard"></i>
+        <span>أفلام</span>
+    </div>
+    <div class="nav-item search-btn-wrapper" onclick="switchPage('search-page', this)">
+        <div class="floating-search">
+            <i class="fa-solid fa-search"></i>
+        </div>
+    </div>
+    <div class="nav-item" onclick="switchPage('favorites-page', this)">
+        <i class="fa-solid fa-heart"></i>
+        <span>المفضلة</span>
+    </div>
+    <div class="nav-item" onclick="switchPage('settings-page', this)">
+        <i class="fa-solid fa-gear"></i>
+        <span>الإعدادات</span>
+    </div>
+</div>
+
+<div id="player-modal">
+    <div class="player-box">
+        <div class="player-header">
+            <span id="playing-title">جاري التشغيل...</span>
+            <button onclick="closePlayer()"><i class="fa-solid fa-times"></i></button>
+        </div>
+        <video id="video-player" controls playsinline></video>
+        <button id="add-fav-btn" onclick="addToFavorites()">
+            <i class="fa-regular fa-heart"></i> إضافة للمفضلة
+        </button>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
