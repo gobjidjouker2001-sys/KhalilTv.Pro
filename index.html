@@ -2,162 +2,126 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>KhalilTV Pro</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <link rel="stylesheet" href="style.css">
+    <title>KhalilTV Pro</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
-<body>
+<body class="dark-theme">
 
-<div id="splash-screen">
-    <div class="splash-content">
-        <img src="logo.png" class="splash-logo" alt="Logo">
-        <div class="splash-title">KhalilTV Pro</div>
-        <div class="splash-loader"></div>
+    <div id="splash-screen" class="splash">
+        <div class="splash-box">
+            <img src="logo.png" class="main-logo" onerror="this.src='https://cdn-icons-png.flaticon.com/512/716/716429.png'">
+            <h1 class="app-name">KhalilTV <span>Pro</span></h1>
+            <div class="loader-bar"><span></span></div>
+        </div>
     </div>
-</div>
 
-<div id="app-content">
+    <main id="app-wrapper">
+        <section class="app-page active" id="page-categories">
+            <header class="page-header"><h2 data-i18n="explore">اكتشف القنوات</h2></header>
+            <div class="category-list">
+                <div class="cat-item" onclick="App.filter('أخبار')"><i class="fa-solid fa-newspaper"></i> <span data-i18n="news">أخبار</span></div>
+                <div class="cat-item" onclick="App.filter('رياضة')"><i class="fa-solid fa-trophy"></i> <span data-i18n="sports">رياضة</span></div>
+                <div class="cat-item" onclick="App.filter('افلام')"><i class="fa-solid fa-film"></i> <span data-i18n="movies">أفلام</span></div>
+                <div class="cat-item" onclick="App.filter('جزائري')"><i class="fa-solid fa-flag"></i> <span data-i18n="dz">جزائري</span></div>
+                <div class="cat-item" onclick="App.filter('مسلسلات')"><i class="fa-solid fa-tv"></i> <span data-i18n="series">مسلسلات</span></div>
+                <div class="cat-item" onclick="App.filter('اطفال')"><i class="fa-solid fa-child"></i> <span data-i18n="kids">أطفال</span></div>
+            </div>
+            <div class="channels-grid" id="grid-main"></div>
+        </section>
 
-    <div class="page active" id="categories-page">
-        <div class="header">
-            <h2>تصفح الفئات</h2>
+        <section class="app-page" id="page-movies">
+            <header class="page-header"><h2 data-i18n="movie_lib">مكتبة الأفلام</h2></header>
+            <div class="channels-grid" id="grid-movies"></div>
+        </section>
+
+        <section class="app-page" id="page-search">
+            <div class="search-container">
+                <input type="text" id="input-search" placeholder="ابحث..." oninput="App.search(this.value)">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            </div>
+            <div class="channels-grid" id="grid-search"></div>
+        </section>
+
+        <section class="app-page" id="page-favorites">
+            <header class="page-header"><h2 data-i18n="fav_list">قنواتي المفضلة</h2></header>
+            <div class="channels-grid" id="grid-favorites"></div>
+        </section>
+
+        <section class="app-page" id="page-settings">
+            <div class="settings-container">
+                <div class="settings-profile">
+                    <img src="logo.png" class="settings-logo-small" onerror="this.src='https://cdn-icons-png.flaticon.com/512/716/716429.png'">
+                    <h3>KhalilTV <span class="primary-color">Pro</span></h3>
+                </div>
+
+                <div class="settings-card">
+                    <div class="card-header"><i class="fa-solid fa-circle-info"></i> <span data-i18n="app_info">حول التطبيق</span></div>
+                    <div class="info-item"><span data-i18n="version">الإصدار</span><span>1.0.0</span></div>
+                    <div class="info-item"><span data-i18n="developer">المطور</span><span>Lefreid Khalil</span></div>
+                </div>
+
+                <div class="settings-card">
+                    <div class="card-header"><i class="fa-solid fa-sliders"></i> <span data-i18n="prefs">الإعدادات</span></div>
+                    <div class="setting-row">
+                        <div class="setting-label"><i class="fa-solid fa-moon"></i> <span data-i18n="dark_mode">الوضع الداكن</span></div>
+                        <label class="switch">
+                            <input type="checkbox" id="theme-toggle" checked onchange="App.toggleTheme()">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="setting-row">
+                        <div class="setting-label"><i class="fa-solid fa-language"></i> <span data-i18n="language">اللغة</span></div>
+                        <select id="lang-select" onchange="App.setLanguage(this.value)">
+                            <option value="ar">العربية</option>
+                            <option value="fr">Français</option>
+                            <option value="en">English</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <nav class="bottom-bar">
+        <div class="nav-item active" onclick="App.navigate(event, 'page-categories')"><i class="fa-solid fa-list"></i><span data-i18n="cats">الفئات</span></div>
+        <div class="nav-item" onclick="App.navigate(event, 'page-movies')"><i class="fa-solid fa-film"></i><span data-i18n="movies">أفلام</span></div>
+        <div class="nav-item" onclick="App.navigate(event, 'page-search')"><div class="circle-btn"><i class="fa-solid fa-search"></i></div></div>
+        <div class="nav-item" onclick="App.navigate(event, 'page-favorites')"><i class="fa-solid fa-heart"></i><span data-i18n="favs">المفضلة</span></div>
+        <div class="nav-item" onclick="App.navigate(event, 'page-settings')"><i class="fa-solid fa-gear"></i><span data-i18n="settings">الإعدادات</span></div>
+    </nav>
+<div id="player-modal" class="modal">
+    <div class="video-container" id="video-parent">
+        <video id="video-element" playsinline></video>
+        
+        <div class="video-controls" id="v-controls">
+            <div class="top-bar-player">
+                <button class="player-btn" onclick="App.closePlayer()"><i class="fa-solid fa-chevron-right"></i></button>
+                <span id="playing-now">إسم القناة</span>
+                <span class="live-tag">LIVE</span>
+            </div>
+
+            <div class="center-controls">
+                <button class="main-play-btn" onclick="App.togglePlay()"><i class="fa-solid fa-play" id="main-icon"></i></button>
+            </div>
+
+            <div class="bottom-bar-player">
+                <div class="control-group">
+                    <button class="player-btn" onclick="App.togglePlay()"><i class="fa-solid fa-play" id="btn-play"></i></button>
+                    <button class="player-btn" onclick="App.toggleMute()"><i class="fa-solid fa-volume-high" id="btn-vol"></i></button>
+                </div>
+                <button class="player-btn" onclick="App.toggleFullscreen()"><i class="fa-solid fa-expand"></i></button>
+            </div>
         </div>
         
-        <div class="categories-container">
-            <div class="cat-card" onclick="loadCategory('أخبار')">
-                <div class="cat-icon"><i class="fa-solid fa-newspaper"></i></div>
-                <span>أخبار</span>
-            </div>
-            <div class="cat-card" onclick="loadCategory('رياضة')">
-                <div class="cat-icon"><i class="fa-solid fa-futbol"></i></div>
-                <span>رياضة</span>
-            </div>
-            <div class="cat-card" onclick="loadCategory('افلام')">
-                <div class="cat-icon"><i class="fa-solid fa-film"></i></div>
-                <span>أفلام</span>
-            </div>
-            <div class="cat-card" onclick="loadCategory('جزائري')">
-                <div class="cat-icon"><i class="fa-solid fa-flag"></i></div>
-                <span>جزائري</span>
-            </div>
-            <div class="cat-card" onclick="loadCategory('مسلسلات')">
-                <div class="cat-icon"><i class="fa-solid fa-tv"></i></div>
-                <span>مسلسلات</span>
-            </div>
-            <div class="cat-card" onclick="loadCategory('اطفال')">
-                <div class="cat-icon"><i class="fa-solid fa-child-reaching"></i></div>
-                <span>أطفال</span>
-            </div>
-        </div>
-
-        <div class="section-divider"><span>القنوات المقترحة</span></div>
-        <div class="grid" id="main-grid"></div>
-    </div>
-
-    <div class="page" id="movies-page">
-        <div class="header"><h2>مكتبة الأفلام</h2></div>
-        <div class="grid" id="movies-grid"></div>
-    </div>
-
-    <div class="page" id="search-page">
-        <div class="search-wrapper">
-            <i class="fa-solid fa-search search-icon"></i>
-            <input type="text" id="search-input" placeholder="ابحث عن قناة، فيلم، مسلسل..." oninput="searchHandler()">
-        </div>
-        <div class="grid" id="search-results"></div>
-    </div>
-
-    <div class="page" id="favorites-page">
-        <div class="header"><h2>قنواتي المفضلة</h2></div>
-        <div class="grid" id="fav-grid">
-            <div class="empty-state">لا توجد قنوات مفضلة حالياً</div>
-        </div>
-    </div>
-
-    <div class="page" id="settings-page">
-        <div class="settings-wrapper">
-            <div class="settings-header">
-                <img src="logo.png" class="settings-logo-img">
-                <h3>KhalilTV Pro</h3>
-            </div>
-
-            <div class="settings-card">
-                <div class="setting-item">
-                    <div class="setting-label">
-                        <i class="fa-solid fa-moon"></i> الوضع الداكن
-                    </div>
-                    <label class="switch">
-                        <input type="checkbox" id="theme-toggle" checked onclick="toggleTheme()">
-                        <span class="slider round"></span>
-                    </label>
-                </div>
-
-                <div class="setting-item">
-                    <div class="setting-label">
-                        <i class="fa-solid fa-language"></i> اللغة
-                    </div>
-                    <select class="lang-select">
-                        <option>العربية</option>
-                        <option>Français</option>
-                        <option>English</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="about-card">
-                <div class="about-row">
-                    <span>الإصدار</span>
-                    <span class="version-badge">1.0</span>
-                </div>
-                <div class="about-dev">
-                    <p>برمجة وتصميم</p>
-                    <h4>Lefreid Khalil</h4>
-                </div>
-            </div>
-        </div>
-    </div>
-
-</div>
-
-<div class="bottom-nav">
-    <div class="nav-item active" onclick="switchPage('categories-page', this)">
-        <i class="fa-solid fa-layer-group"></i>
-        <span>الفئات</span>
-    </div>
-    <div class="nav-item" onclick="switchPage('movies-page', this)">
-        <i class="fa-solid fa-clapperboard"></i>
-        <span>أفلام</span>
-    </div>
-    <div class="nav-item search-btn-wrapper" onclick="switchPage('search-page', this)">
-        <div class="floating-search">
-            <i class="fa-solid fa-search"></i>
-        </div>
-    </div>
-    <div class="nav-item" onclick="switchPage('favorites-page', this)">
-        <i class="fa-solid fa-heart"></i>
-        <span>المفضلة</span>
-    </div>
-    <div class="nav-item" onclick="switchPage('settings-page', this)">
-        <i class="fa-solid fa-gear"></i>
-        <span>الإعدادات</span>
+        <div id="v-loader" class="v-loader"><i class="fa-solid fa-circle-notch fa-spin"></i></div>
     </div>
 </div>
 
-<div id="player-modal">
-    <div class="player-box">
-        <div class="player-header">
-            <span id="playing-title">جاري التشغيل...</span>
-            <button onclick="closePlayer()"><i class="fa-solid fa-times"></i></button>
-        </div>
-        <video id="video-player" controls playsinline></video>
-        <button id="add-fav-btn" onclick="addToFavorites()">
-            <i class="fa-regular fa-heart"></i> إضافة للمفضلة
-        </button>
-    </div>
-</div>
+    
 
-<script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
